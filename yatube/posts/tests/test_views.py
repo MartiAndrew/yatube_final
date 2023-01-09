@@ -45,17 +45,13 @@ class PostViewTests(TestCase):
         templates_page_names = {
             'posts/index.html': reverse('posts:index'),
             'posts/group_list.html': reverse('posts:group_list', kwargs={
-                'slug': PostViewTests.group_1.slug}
-                                             ),
+                'slug': PostViewTests.group_1.slug}),
             'posts/profile.html': reverse('posts:profile', kwargs={
-                'username': PostViewTests.author.username}
-                                          ),
+                'username': PostViewTests.author.username}),
             'posts/post_detail.html': reverse('posts:post_detail', kwargs={
-                'post_id': PostViewTests.post.id}
-                                              ),
+                'post_id': PostViewTests.post.id}),
             'posts/create_post.html': reverse('posts:post_edit', kwargs={
-                'post_id': PostViewTests.post.id}
-                                              ),
+                'post_id': PostViewTests.post.id}),
         }
         for template, reverse_name in templates_page_names.items():
             with self.subTest(template=template):
@@ -74,9 +70,7 @@ class PostViewTests(TestCase):
     def test_group_list_show_correct_context(self):
         """Шаблон group_list сформирован с правильным контекстом."""
         response = self.guest_client.get(reverse('posts:group_list', kwargs={
-            'slug': PostViewTests.group_1.slug}
-                                                 )
-                                         )
+            'slug': PostViewTests.group_1.slug}))
         context = response.context['page_obj'][0]
         self.assertEqual(context.text, 'test_text')
         self.assertEqual(context.group, self.group_1)
@@ -85,9 +79,7 @@ class PostViewTests(TestCase):
     def test_profile_show_correct_context(self):
         """Шаблон profile сформирован с правильным контекстом."""
         response = self.auth_client.get(reverse('posts:profile', kwargs={
-            'username': PostViewTests.author.username}
-                                                )
-                                        )
+            'username': PostViewTests.author.username}))
         context = response.context['page_obj'][0]
         context_posts_count = response.context['posts_count']
         self.assertEqual(context.text, self.post.text)
@@ -99,15 +91,11 @@ class PostViewTests(TestCase):
         """Шаблон post_detail сформирован с правильным контекстом."""
         response = self.auth_client.get(
             reverse('posts:post_detail', kwargs={
-                'post_id': PostViewTests.post.id}
-                    )
-        )
+                'post_id': PostViewTests.post.id}))
         self.assertEqual(
-            response.context['post_item'].text, 'test_text'
-        )
+            response.context['post_item'].text, 'test_text')
         self.assertEqual(
-            response.context['post_item'].image, self.post.image
-        )
+            response.context['post_item'].image, self.post.image)
 
     def test_create_post_show_correct_context(self):
         """Шаблон create_post сформирован с правильным контекстом."""
@@ -124,9 +112,7 @@ class PostViewTests(TestCase):
     def test_edit_post_show_correct_context(self):
         """Шаблон edit_post сформирован с правильным контекстом."""
         response = self.auth_client.get(reverse(
-            'posts:post_edit', kwargs={'post_id': PostViewTests.post.id}
-        )
-        )
+            'posts:post_edit', kwargs={'post_id': PostViewTests.post.id}))
         form_fields = {
             'text': forms.fields.CharField,
             'group': forms.models.ModelChoiceField,
@@ -141,14 +127,10 @@ class PostViewTests(TestCase):
         response_index = self.auth_client.get(reverse('posts:index'))
         response_group_list = self.auth_client.get(reverse(
             'posts:group_list',
-            kwargs={'slug': PostViewTests.group_1.slug}
-        )
-        )
+            kwargs={'slug': PostViewTests.group_1.slug}))
         response_profile = self.auth_client.get(reverse(
             'posts:profile',
-            kwargs={'username': PostViewTests.author.username}
-        )
-        )
+            kwargs={'username': PostViewTests.author.username}))
         for response in [response_index,
                          response_group_list, response_profile]:
             context = response.context['page_obj'][0]
@@ -176,20 +158,16 @@ class PostViewTests(TestCase):
         """Проверка работы кеша"""
         post = Post.objects.create(
             text='Пост для кеширования',
-            author=self.author
-        )
+            author=self.author)
         post_text_add = self.auth_client.get(
-            reverse('posts:index')
-        ).content
+            reverse('posts:index')).content
         post.delete()
         post_text_delete = self.auth_client.get(
-            reverse('posts:index')
-        ).content
+            reverse('posts:index')).content
         self.assertEqual(post_text_add, post_text_delete)
         cache.clear()
         post_text_cache_clear = self.auth_client.get(
-            reverse('posts:index')
-        ).content
+            reverse('posts:index')).content
         self.assertNotEqual(post_text_add, post_text_cache_clear)
 
 
@@ -232,12 +210,10 @@ class PaginatorViewsTest(TestCase):
 
                 self.assertEqual(
                     len(response_page_1.context['page_obj']),
-                    PAGE_1_POSTS
-                )
+                    PAGE_1_POSTS)
                 self.assertEqual(
                     len(response_page_2.context['page_obj']),
-                    page_2_posts
-                )
+                    page_2_posts)
 
 
 class FollowViewsTest(TestCase):

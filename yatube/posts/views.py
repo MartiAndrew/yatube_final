@@ -14,8 +14,7 @@ def index(request):
     post_list = Post.objects.select_related('author', 'group')
     return render(request, 'posts/index.html', context={
         'title': 'Последние обновления на сайте',
-        'page_obj': get_paginator(post_list, request), }
-                  )
+        'page_obj': get_paginator(post_list, request), })
 
 
 def group_posts(request, slug):
@@ -23,8 +22,7 @@ def group_posts(request, slug):
     post_list = group.posts.select_related('author')
     return render(request, 'posts/group_list.html', context={
         'group': group,
-        'page_obj': get_paginator(post_list, request), }
-                  )
+        'page_obj': get_paginator(post_list, request), })
 
 
 def profile(request, username):
@@ -38,8 +36,7 @@ def profile(request, username):
         'author': author,
         'posts_count': posts_count,
         'following': following,
-        'page_obj': get_paginator(post_list, request), }
-                  )
+        'page_obj': get_paginator(post_list, request), })
 
 
 def post_detail(request, post_id):
@@ -51,8 +48,7 @@ def post_detail(request, post_id):
     return render(request, 'posts/post_detail.html', context={
         'post_item': post_item,
         'form': form,
-        'comments': comments}
-                  )
+        'comments': comments})
 
 
 @login_required
@@ -62,8 +58,7 @@ def post_create(request):
                     )
     if not form.is_valid():
         return render(request, 'posts/create_post.html', context={
-            'form': form, 'is_edit': False}
-                      )
+            'form': form, 'is_edit': False})
     post = form.save(commit=False)
     post.author = request.user
     form.save()
@@ -83,8 +78,7 @@ def post_edit(request, post_id):
             form.save()
             return redirect('posts:post_detail', post_id)
     return render(request, 'posts/create_post.html', context={
-        'form': form, 'is_edit': True}
-                  )
+        'form': form, 'is_edit': True})
 
 
 @login_required
@@ -107,8 +101,7 @@ def follow_index(request):
     follow_posts = Post.objects.filter(author__following__user=request.user)
     return render(request, 'posts/follow.html', context={
         'title': 'Посты с подписками',
-        'page_obj': get_paginator(follow_posts, request), }
-                  )
+        'page_obj': get_paginator(follow_posts, request), })
 
 
 @login_required
