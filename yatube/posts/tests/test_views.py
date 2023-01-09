@@ -7,9 +7,11 @@ from posts.models import Group, Post, Follow, User
 PAGE_1_POSTS = 10
 
 
-# Леш, здравствуй. Решил сделать кэш через view-функцию. Не знаю насколько правильно,
-# Возникли проблемы с тестами, с добавлением cache.clear(). В пачке писали, что если
-# через шаблон кэш реализовывать, то нет этой проблемы. Не совсем понял, почему так?
+# Леш, здравствуй. С прошедшими праздниками тебя.
+# Решил сделать кэш через view-функцию. Не знаю насколько правильно,
+# Возникли проблемы с тестами, с добавлением cache.clear().
+# В пачке писали, что если через шаблон кэш реализовывать,
+# то нет этой проблемы. Не совсем понял, почему так?
 class PostViewTests(TestCase):
     @classmethod
     def setUpClass(cls):
@@ -174,16 +176,20 @@ class PostViewTests(TestCase):
         """Проверка работы кеша"""
         post = Post.objects.create(
             text='Пост для кеширования',
-            author=self.author)
+            author=self.author
+        )
         post_text_add = self.auth_client.get(
-            reverse('posts:index')).content
+            reverse('posts:index')
+        ).content
         post.delete()
         post_text_delete = self.auth_client.get(
-            reverse('posts:index')).content
+            reverse('posts:index')
+        ).content
         self.assertEqual(post_text_add, post_text_delete)
         cache.clear()
         post_text_cache_clear = self.auth_client.get(
-            reverse('posts:index')).content
+            reverse('posts:index')
+        ).content
         self.assertNotEqual(post_text_add, post_text_cache_clear)
 
 
@@ -259,29 +265,37 @@ class FollowViewsTest(TestCase):
     def test_follow(self):
         """Проверка подписки на пользователя."""
         self.follower_client.post(reverse('posts:profile_follow',
-                kwargs={'username': self.post_author}))
+                                          kwargs={'username': self.post_author}
+                                          )
+                                  )
         self.assertEqual(Follow.objects.count(), 1)
 
     def test_unfollow(self):
         """Проверка отписки от пользователя."""
         Follow.objects.create(user=self.post_follower,
-                              author=self.post_author)
+                              author=self.post_author
+                              )
         self.follower_client.post(reverse('posts:profile_unfollow',
-                kwargs={'username': self.post_author}))
+                                          kwargs={'username': self.post_author}
+                                          )
+                                  )
         self.assertEqual(Follow.objects.count(), 0)
 
     def test_follow_on_authors(self):
         """Проверка новых записей у тех кто подписан."""
         post = Post.objects.create(author=self.post_author,
-                                   text="пост для подписки")
+                                   text="пост для подписки"
+                                   )
         Follow.objects.create(user=self.post_follower,
-                              author=self.post_author)
+                              author=self.post_author
+                              )
         response = self.follower_client.get(reverse('posts:follow_index'))
         self.assertIn(post, response.context['page_obj'].object_list)
 
     def test_notfollow_on_authors(self):
         """Проверка новых записей у тех кто не подписан."""
         post = Post.objects.create(author=self.post_author,
-                                   text="пост для подписки")
+                                   text="пост для подписки"
+                                   )
         response = self.follower_client.get(reverse('posts:follow_index'))
         self.assertNotIn(post, response.context['page_obj'].object_list)

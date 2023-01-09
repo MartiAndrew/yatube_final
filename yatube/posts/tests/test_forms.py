@@ -110,6 +110,3 @@ class PostsFormsTests(TestCase):
         self.assertEqual(edited_post.author, post.author)
         self.assertEqual(self.group.posts.count(), 0)
         self.assertEqual(Post.objects.count(), 1)
-
-
-
