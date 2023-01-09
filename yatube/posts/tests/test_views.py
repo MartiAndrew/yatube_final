@@ -196,11 +196,9 @@ class PaginatorViewsTest(TestCase):
         urls_names_2page = {
             reverse('posts:index'): 3,
             reverse('posts:group_list', kwargs={
-                'slug': PaginatorViewsTest.group.slug}
-                    ): 3,
+                'slug': PaginatorViewsTest.group.slug}): 3,
             reverse('posts:profile', kwargs={
-                'username': PaginatorViewsTest.author.username}
-                    ): 3,
+                'username': PaginatorViewsTest.author.username}): 3,
         }
 
         for page, page_2_posts in urls_names_2page.items():
