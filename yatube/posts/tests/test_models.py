@@ -1,5 +1,5 @@
 from django.test import TestCase
-from ..models import Group, Post, User, NUM_SYMB
+from ..models import Group, Post, User, Comment, NUM_SYMB
 
 
 class PostModelTest(TestCase):
@@ -57,3 +57,45 @@ class PostModelTest(TestCase):
                 self.assertEqual(
                     post._meta.get_field(field).help_text, expected_help_text
                 )
+
+
+class CommentModelTest(TestCase):
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.user = User.objects.create_user(username='Andrey')
+        cls.post = Post.objects.create(
+            text='Тестовый пост',
+            author=cls.user,
+        )
+        cls.comment = Comment.objects.create(
+            text='Комментарий для поста',
+            author=cls.user,
+            post=cls.post,
+        )
+
+    def test_сomment_str(self):
+        """Проверка __str__ у сomment."""
+        comment = CommentModelTest.comment
+        expected_object_name = comment.text[:NUM_SYMB]
+        self.assertEqual(expected_object_name, str(comment))
+
+    def test_сomment_verbose_name(self):
+        """Проверка verbose_name у сomment."""
+        field_verboses = {
+            'post': 'Пост',
+            'author': 'Автор',
+            'text': 'Комментарий',
+            'created': 'Создан',
+        }
+        for value, expected in field_verboses.items():
+            with self.subTest(value=value):
+                verbose_name = self.comment._meta.get_field(value).verbose_name
+                self.assertEqual(verbose_name, expected)
+
+    def test_post_help_text(self):
+        """Проверяем, help_text'ы у модели Comment."""
+        comment = CommentModelTest.comment
+        self.assertEqual(
+            comment._meta.get_field('text').help_text, 'Добавить комментарий'
+        )

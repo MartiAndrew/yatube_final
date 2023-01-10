@@ -65,7 +65,9 @@ class Comment(models.Model):
         related_name='comments',
         verbose_name='Автор')
     text = models.TextField(
-        verbose_name='Комментарий')
+        verbose_name='Комментарий',
+        help_text='Добавить комментарий'
+    )
     created = models.DateTimeField(
         auto_now_add=True,
         verbose_name='Создан')
@@ -76,7 +78,7 @@ class Comment(models.Model):
         verbose_name_plural = 'Комментарии'
 
     def __str__(self):
-        return self.text[:15]
+        return self.text[:NUM_SYMB]
 
 
 class Follow(models.Model):
@@ -94,6 +96,10 @@ class Follow(models.Model):
     )
 
     class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'author'], name='unique_follow')
+        ]
         verbose_name = 'Подписка'
         verbose_name_plural = 'Подписки'
 

@@ -88,11 +88,12 @@ def add_comment(request, post_id):
         pk=post_id
     )
     form = CommentForm(request.POST or None)
-    if form.is_valid():
-        comment = form.save(commit=False)
-        comment.author = request.user
-        comment.post = post
-        comment.save()
+    if not form.is_valid():
+        return redirect('posts:post_detail', post_id=post_id)
+    comment = form.save(commit=False)
+    comment.author = request.user
+    comment.post = post
+    comment.save()
     return redirect('posts:post_detail', post_id=post_id)
 
 

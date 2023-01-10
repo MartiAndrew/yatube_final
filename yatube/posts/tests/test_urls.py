@@ -23,12 +23,13 @@ class PostURLTests(TestCase):
         cls.profile_url = f'/profile/{PostURLTests.author}/'
         cls.post_id_url = f'/posts/{PostURLTests.post.id}/'
         cls.edit_url = f'/posts/{PostURLTests.post.id}/edit/'
+        cls.follow_url = '/follow/'
         cls.create = '/create/'
 
     def setUp(self):
         self.guest_client = Client()
-        self.authorized_client = Client()
-        self.authorized_client.force_login(self.author)
+        self.auth_client = Client()
+        self.auth_client.force_login(self.author)
         cache.clear()
 
     def test_urls_for_guests(self):
@@ -58,19 +59,29 @@ class PostURLTests(TestCase):
                 response = self.guest_client.get(address)
                 self.assertTemplateUsed(response, template)
 
+    def test_follow_page(self):
+        """Тест, что follow.html доступна авторизованному пользователю."""
+        response = self.auth_client.get(self.follow_url)
+        self.assertEqual(response.status_code, HTTPStatus.OK)
+
+    def test_follow_correct_template(self):
+        """Тест, что follow использует соответствующий шаблон."""
+        response = self.auth_client.get(self.follow_url)
+        self.assertTemplateUsed(response, 'posts/follow.html')
+
     def test_edit_url_uses_correct_template(self):
         """Страница /edit/ использует шаблон create_post.html """
-        response = self.authorized_client.get(self.edit_url)
+        response = self.auth_client.get(self.edit_url)
         self.assertTemplateUsed(response, 'posts/create_post.html')
 
     def test_create_url_exists_at_desired_location(self):
         """Проверка, что создание доступно авторизованному пользователю."""
-        response = self.authorized_client.get(self.create)
+        response = self.auth_client.get(self.create)
         self.assertEqual(response.status_code, HTTPStatus.OK)
 
     def test_edit_url_exists_at_desired_location(self):
         """Проверка, что редакт-е доступно авторизованному пользователю."""
-        response = self.authorized_client.get(self.edit_url)
+        response = self.auth_client.get(self.edit_url)
         self.assertEqual(response.status_code, HTTPStatus.OK)
 
     def test_create_url_redirect_anonymous(self):
