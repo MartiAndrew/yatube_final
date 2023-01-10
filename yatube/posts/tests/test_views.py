@@ -7,8 +7,8 @@ from posts.models import Group, Post, Follow, User
 PAGE_1_POSTS = 10
 
 
-#Просто в теории не было, что в сетапах надо cache.clear() вставлять,
-#и я подумал, что это какие то костыли и можно как то по-другому.
+# Просто в теории не было, что в сетапах надо cache.clear() вставлять,
+# и я подумал, что это какие то костыли и можно как то по-другому.
 class PostViewTests(TestCase):
     @classmethod
     def setUpClass(cls):
